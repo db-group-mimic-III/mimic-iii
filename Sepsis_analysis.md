@@ -136,25 +136,25 @@ create table abnorm_clin_val (
 	hadm_id int,
 	category varchar(15),
 	itemid int,
-	chartime DATETIME(0),
+	charttime DATETIME(0),
 	valuenum double precision		
 )
 ;
 
-
+# CO2
 insert into abnorm_clin_val
 select * from (
-# CO2
-select hadm_id, 'CO2' as  category, itemid, charttime, valuenum
-from labevents
-where hadm_id in
-(
-select hadm_id
-from sepsis_patients where subject_id = 10188
-)
-and itemid in (50818,  50804)
-and valuenum < 32
-) j
+
+	select hadm_id, 'CO2' as  category, itemid, charttime, valuenum
+	from labevents
+	where hadm_id in
+		(
+		select hadm_id
+		from sepsis_patients where subject_id = 10188
+		)
+	and itemid in (50818,  50804)
+	and valuenum < 32
+	) j
 ;
 
 
@@ -162,79 +162,86 @@ and valuenum < 32
 # WBC
 insert into abnorm_clin_val
 select * from (
-select hadm_id, 'WBC' as category,itemid, charttime, valuenum
-from labevents
-where hadm_id in
-(
-select hadm_id
-from sepsis_patients where subject_id = 10188
-)
-and  itemid in  (51300, 51301)
-and (valuenum < 4 or valuenum > 12)
-) j
+	select hadm_id, 'WBC' as category,itemid, charttime, valuenum
+	from labevents
+	where hadm_id in
+		(
+		select hadm_id
+		from sepsis_patients where subject_id = 10188
+		)
+	and  itemid in  (51300, 51301)
+	and (valuenum < 4 or valuenum > 12)
+	) j
 ;
 
 # Bands
 insert into abnorm_clin_val
 select * from (
-select hadm_id, 'Bands' as category,itemid, charttime, valuenum
-from labevents
-where hadm_id in
-(
-select hadm_id
-from sepsis_patients where subject_id = 10188
-)
-and  itemid in  (51144)
-and valuenum >10
-) j
+	select hadm_id, 'Bands' as category,itemid, charttime, valuenum
+	from labevents
+	where hadm_id in
+		(
+		select hadm_id
+		from sepsis_patients where subject_id = 10188
+		)
+	and  itemid in  (51144)
+	and valuenum >10
+	) j
 ;
 
 
 # Heart
 insert into abnorm_clin_val
 select * from (
-select  hadm_id, 'Heart rate' as category,itemid, charttime, valuenum
-from chartevents
-where hadm_id in
-(
-select hadm_id
-from sepsis_patients where subject_id = 10188
-)
-and  itemid in  (211, 220045)
-and valuenum >90
-) j
+	select  hadm_id, 'Heart rate' as category,itemid, charttime, valuenum
+	from chartevents
+	where hadm_id in
+		(
+		select hadm_id
+		from sepsis_patients where subject_id = 10188
+		)
+	and  itemid in  (211, 220045)
+	and valuenum >90
+	) j
 ;
 
 
 # Temp F
 insert into abnorm_clin_val
 select * from (
-select hadm_id, 'Temp F' as category,itemid, charttime, valuenum
-from chartevents
-where hadm_id in
-(
-select hadm_id
-from sepsis_patients where subject_id = 10188
-)
-and  itemid in  (679,678)
-and (valuenum >100.4 or valuenum < 98.6)
-) j
+	select hadm_id, 'Temp F' as category,itemid, charttime, valuenum
+	from chartevents
+	where hadm_id in
+		(
+		select hadm_id
+		from sepsis_patients where subject_id = 10188
+		)
+	and  itemid in  (679,678)
+	and (valuenum >100.4 or valuenum < 98.6)
+	) j
 ;
 
 # Resp rate 
 insert into abnorm_clin_val
 select * from (
-select hadm_id,  'Resp rate' as category,itemid, charttime, valuenum
-from chartevents
-where hadm_id in
-(
-select hadm_id
-from sepsis_patients where subject_id = 10188
-)
-and  itemid = 618
-and valuenum  > 20 
-) j
+	select hadm_id,  'Resp rate' as category,itemid, charttime, valuenum
+	from chartevents
+	where hadm_id in
+		(
+		select hadm_id
+		from sepsis_patients where subject_id = 10188
+		)
+	and  itemid = 618
+	and valuenum  > 20 
+	) j
 ;
+
+#  Index creation
+alter table abnorm_clin_val
+	add index abnorm_clin_val_idx01 (charttime),
+	add index abnorm_clin_val_idx02 (category)
+;
+
 ```
 
 
