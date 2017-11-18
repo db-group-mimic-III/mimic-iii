@@ -127,6 +127,26 @@ or route like 'IM';
 
 #### Create table with Anti-infective agents
 Merge with redbook and select group 'Anti-infective agents'
+``` SQL
+DROP TABLE IF EXISTS Anti_infective_drugs;
+CREATE TABLE Anti_infective_drugs
+(
+# Duplicated NDC
+	NDC varchar(15) ,
+	Drug varchar(50)
+  )	
+;
+
+LOAD DATA LOCAL INFILE '/Users/mariobarbeabrigo/Dropbox/EEUU/UNCC/Fall 2017/Database System HCIP 6160/Group project/Sepsis/anti_infective_drugs.csv' INTO TABLE anti_infective_drugs
+   FIELDS TERMINATED BY ',' ESCAPED BY '\\' OPTIONALLY ENCLOSED BY '"'
+   LINES TERMINATED BY '\n'
+   IGNORE 1 LINES
+   (@NDC,@drug)
+ SET
+   NDC = @NDC,
+   Drug = @drug
+   ;
+```
 
 
 #### Create table with abnormal clinical values using sepsis_patients
