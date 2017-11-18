@@ -207,7 +207,7 @@ and valuenum >90
 # Temp F
 insert into abnorm_clin_val
 select * from (
-select hadm_id, 'Heart rate' as category,itemid, charttime, valuenum
+select hadm_id, 'Temp F' as category,itemid, charttime, valuenum
 from chartevents
 where hadm_id in
 (
@@ -215,7 +215,7 @@ select hadm_id
 from sepsis_patients where subject_id = 10188
 )
 and  itemid in  (679,678)
-and valuenum >100.4 or valuenum < 98.6
+and (valuenum >100.4 or valuenum < 98.6)
 ) j
 ;
 
