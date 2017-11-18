@@ -130,6 +130,8 @@ Merge with redbook and select group 'Anti-infective agents'
 
 #### Create table with abnormal clinical values using sepsis_patients
 ``` SQL
+DROP TABLE IF EXISTS abnorm_clin_val;
+
 create table abnorm_clin_val (
 	hadm_id int,
 	category varchar(15),
