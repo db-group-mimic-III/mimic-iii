@@ -23,10 +23,10 @@ Clinical manifestations (two or more)
 select short_title, long_title, j.icd9_code, N
 from d_icd_diagnoses d
 inner join 
-  (SELECT icd9_code, count(distinct subject_id) as N
-  FROM mimiciiiv13.DIAGNOSES_ICD
-  where ICD9_code in ('99591', '99592')
-  group by icd9_code) j on d.icd9_code = j.icd9_code
+	(SELECT icd9_code, count(distinct subject_id) as N
+	FROM mimiciiiv13.DIAGNOSES_ICD
+	where ICD9_code in ('99591', '99592')
+	group by icd9_code) j on d.icd9_code = j.icd9_code
 where d.ICD9_code in ('99591', '99592')
 ;
 ```
@@ -35,10 +35,10 @@ where d.ICD9_code in ('99591', '99592')
 select long_title as icd9_name, j.icd9_code, N
 from d_icd_diagnoses d
 inner join 
-(SELECT icd9_code, count(distinct hadm_id) as N
-FROM mimiciiiv13.DIAGNOSES_ICD
-where ICD9_code in ('99591', '99592')
-group by icd9_code) j on d.icd9_code = j.icd9_code
+	(SELECT icd9_code, count(distinct hadm_id) as N
+	FROM mimiciiiv13.DIAGNOSES_ICD
+	where ICD9_code in ('99591', '99592')
+	group by icd9_code) j on d.icd9_code = j.icd9_code
 where d.ICD9_code in ('99591', '99592')
 ;
 ```
@@ -68,6 +68,7 @@ DROP TABLE IF EXISTS sepsis_patients;
 
 # Used datetime instead of timestamp because the first offers a bigger range.
 create table sepsis_patients (
+	id_ab_clin int PRIMARY KEY AUTO_INCREMENT,
 	hadm_id int,
 	intime DATETIME(0),
 	outtime DATETIME(0),
@@ -244,8 +245,27 @@ alter table abnorm_clin_val
 
 ```
 
-
-
+#### Create SIRS intervals
+```SQL
+select start_info.*, end_info.category, end_info.charttime as end_time, end_info.valuenum, timestampdiff(MINUTE, start_info.charttime, end_info.charttime) as time_diff_min
+from abnorm_clin_val end_info
+right join ( 
+				select ab.* , 
+# Create time interval for SIRS
+# obtain id of the next chartevent (the max charttime) that ocurred in the next hour and is not of the same category
+						(select  id_ab_clin
+						from abnorm_clin_val j
+						where j.category != ab.category
+						and timestampdiff(MINUTE, ab.charttime, j.charttime)  < 60
+						and timestampdiff(MINUTE, ab.charttime, j.charttime)  >=0
+						order by charttime desc
+						limit 1
+					) as id_end
+				from abnorm_clin_val ab
+				) start_info on end_info.id_ab_clin = start_info.id_end
+# Some charevents return NULL because you don't have a temporal match
+where start_info.id_end is not null
+```
 
 ## References 
   * Bone RC, Balk RA, Cerra FB, Dellinger RP, Fein AM, Knaus WA, Schein RM, Sibbald WJ. Definitions for sepsis and organ failure and guidelines for the use of innovative therapies in sepsis. The ACCP/SCCM Consensus Conference Committee. American College of Chest Physicians/Society of Critical Care Medicine.Chest. 1992 Jun;101(6):1644-55.
