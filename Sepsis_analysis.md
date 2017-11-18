@@ -137,7 +137,7 @@ CREATE TABLE Anti_infective_drugs
   )	
 ;
 
-LOAD DATA LOCAL INFILE '/Users/mariobarbeabrigo/Dropbox/EEUU/UNCC/Fall 2017/Database System HCIP 6160/Group project/Sepsis/anti_infective_drugs.csv' INTO TABLE anti_infective_drugs
+LOAD DATA LOCAL INFILE 'anti_infective_drugs.csv' INTO TABLE anti_infective_drugs
    FIELDS TERMINATED BY ',' ESCAPED BY '\\' OPTIONALLY ENCLOSED BY '"'
    LINES TERMINATED BY '\n'
    IGNORE 1 LINES
