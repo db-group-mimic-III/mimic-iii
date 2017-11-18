@@ -247,22 +247,26 @@ alter table abnorm_clin_val
 
 #### Create SIRS intervals
 ```SQL
-select start_info.*, end_info.category, end_info.charttime as end_time, end_info.valuenum, timestampdiff(MINUTE, start_info.charttime, end_info.charttime) as time_diff_min
+select start_info.*, 
+	end_info.category, 
+	end_info.charttime as end_time, 
+	end_info.valuenum, 
+	timestampdiff(MINUTE, start_info.charttime, end_info.charttime) as time_diff_min
 from abnorm_clin_val end_info
 right join ( 
-				select ab.* , 
+		select ab.* , 
 # Create time interval for SIRS
 # obtain id of the next chartevent (the max charttime) that ocurred in the next hour and is not of the same category
-						(select  id_ab_clin
-						from abnorm_clin_val j
-						where j.category != ab.category
-						and timestampdiff(MINUTE, ab.charttime, j.charttime)  < 60
-						and timestampdiff(MINUTE, ab.charttime, j.charttime)  >=0
-						order by charttime desc
-						limit 1
-					) as id_end
-				from abnorm_clin_val ab
-				) start_info on end_info.id_ab_clin = start_info.id_end
+		(select  id_ab_clin
+		from abnorm_clin_val j
+		where j.category != ab.category
+		and timestampdiff(MINUTE, ab.charttime, j.charttime)  < 60
+		and timestampdiff(MINUTE, ab.charttime, j.charttime)  >=0
+		order by charttime desc
+		limit 1
+		) as id_end
+		from abnorm_clin_val ab
+	) start_info on end_info.id_ab_clin = start_info.id_end
 # Some charevents return NULL because you don't have a temporal match
 where start_info.id_end is not null
 ```
