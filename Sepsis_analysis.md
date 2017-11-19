@@ -291,6 +291,30 @@ right join (
 where start_info.id_end is not null
 ```
 
+#### Create intervention intervals
+##### Micribiology
+Microbiology time is difficult to interpret, we don't know if the time represents the result or the time when it was taken.
+``` SQL
+# Microbiology time is difficult to interpret 
+select hadm_id, chartdate, charttime, SPEC_itemid, SPEC_TYPE_DESC, org_itemid
+from microbiologyevents
+# Retrieve only patients with sepsis
+where hadm_id in (
+	select hadm_id
+	from sepsis_patients where subject_id = 10188
+	)
+# Exclude MRS screenng and other screening, they are routine in hospitals
+and  SPEC_TYPE_DESC not in (
+	select distinct SPEC_TYPE_DESC
+	from microbiologyevents
+	where SPEC_TYPE_DESC like '%screen%' 
+	and SPEC_TYPE_DESC != 'Rapid Respiratory Viral Screen & Culture'
+	)
+```
+
+
+
+
 ## References 
   * Bone RC, Balk RA, Cerra FB, Dellinger RP, Fein AM, Knaus WA, Schein RM, Sibbald WJ. Definitions for sepsis and organ failure and guidelines for the use of innovative therapies in sepsis. The ACCP/SCCM Consensus Conference Committee. American College of Chest Physicians/Society of Critical Care Medicine.Chest. 1992 Jun;101(6):1644-55.
 http://journal.chestnet.org/article/S0012-3692(16)38415-X/fulltext
