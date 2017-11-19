@@ -311,10 +311,23 @@ and  SPEC_TYPE_DESC not in (
 	and SPEC_TYPE_DESC != 'Rapid Respiratory Viral Screen & Culture'
 	)
 ```
-#### Anti-infective drugs used in the patient
-`Enddate` is not useful is `startdate` + 0 to 3 hours
+#### Intervals of Anti-infective drugs used in the patient
+
 ```SQL
-select hadm_id, drug, startdate
+DROP TABLE IF EXISTS atb_interventions;
+create table atb_interventions (
+	atb_int_id int primary key auto_increment,
+	hadm_id int,
+	drug varchar(50),
+	startdate datetime(0),
+	enddate datetime(0)
+)
+;
+insert into atb_interventions
+select NULL, j.*
+from
+(
+select hadm_id, drug, startdate, enddate
 from prescriptions
 # Retrieve only patients with sepsis
 where hadm_id in (
@@ -326,6 +339,13 @@ and ndc in (
 	select distinct ndc
 	from Anti_infective_drugs)
 order by startdate
+) j
+;
+# Index creation
+alter table atb_interventions
+	add index atb_interventions_val_idx01 (hadm_id),
+	add index atb_interventions_val_idx02 (startdate),
+	add index atb_interventions_val_idx03 (enddate)
 ;
 ```
 
