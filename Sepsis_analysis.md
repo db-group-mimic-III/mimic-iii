@@ -292,7 +292,7 @@ where start_info.id_end is not null
 ```
 
 #### Create intervention intervals
-##### Micribiology
+##### Microbiology
 Microbiology time is difficult to interpret, we don't know if the time represents the result or the time when it was taken.
 ``` SQL
 # Microbiology time is difficult to interpret 
@@ -311,7 +311,23 @@ and  SPEC_TYPE_DESC not in (
 	and SPEC_TYPE_DESC != 'Rapid Respiratory Viral Screen & Culture'
 	)
 ```
-
+#### Anti-infective drugs used in the patient
+`Enddate` is not useful is `startdate` + 0 to 3 hours
+```SQL
+select hadm_id, drug, startdate
+from prescriptions
+# Retrieve only patients with sepsis
+where hadm_id in (
+	select hadm_id
+	from sepsis_patients where subject_id = 10188
+	)
+# Retrieve onyl anti infective drugs
+and ndc in (
+	select distinct ndc
+	from Anti_infective_drugs)
+order by startdate
+;
+```
 
 
 
