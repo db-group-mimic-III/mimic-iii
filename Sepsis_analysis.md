@@ -426,13 +426,14 @@ and end_info.charttime < date_add(DATE_FORMAT('2110-02-21 15:33:00', '%Y-%c-%d %
 order by start_info.charttime 
 ```
 ##### Search using tables SIRS and atb_interventions
+Does the patient receive antibiotic during the `enddate` day? Shall we include it?
 ``` SQL
 select  sirs.*
 from sirs
 where  exists (select *  
 		from atb_interventions a
 		where sirs.starttime >= a.startdate
-		and sirs.endtime <= a.enddate)
+		and sirs.endtime < a.enddate)
 order by starttime
 ```
 
