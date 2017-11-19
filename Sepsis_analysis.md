@@ -154,6 +154,7 @@ LOAD DATA LOCAL INFILE 'anti_infective_drugs.csv' INTO TABLE anti_infective_drug
 DROP TABLE IF EXISTS abnorm_clin_val;
 
 create table abnorm_clin_val (
+	id_ab_clin int primary key auto_increment,
 	hadm_id int,
 	category varchar(15),
 	itemid int,
@@ -266,6 +267,7 @@ alter table abnorm_clin_val
 ```
 
 #### Create SIRS intervals
+##### Evaluation of SIRS query
 ```SQL
 select start_info.*, 
 	end_info.category, 
@@ -290,6 +292,49 @@ right join (
 # Some charevents return NULL because you don't have a temporal match
 where start_info.id_end is not null
 ```
+##### Creation of table with adjusted SIRS query
+```SQL
+# Create table
+DROP TABLE IF EXISTS sirs;
+create table sirs (
+	sirs_id int primary key auto_increment,
+	hadm_id int,
+	starttime DATETIME(0),
+	endtime datetime(0)
+)
+
+
+# Inser values
+select start_info.hadm_id, 
+	start_info as starttime, 
+	end_info.charttime as end_time
+from abnorm_clin_val end_info
+right join ( 
+		select ab.* , 
+# Create time interval for SIRS
+# obtain id of the next chartevent (the max charttime) that ocurred in the next hour and is not of the same category
+		(select  id_ab_clin
+		from abnorm_clin_val j
+		where j.category != ab.category
+		and timestampdiff(MINUTE, ab.charttime, j.charttime)  < 60
+		and timestampdiff(MINUTE, ab.charttime, j.charttime)  >=0
+		order by charttime desc
+		limit 1
+		) as id_end
+		from abnorm_clin_val ab
+	) start_info on end_info.id_ab_clin = start_info.id_end
+# Some charevents return NULL because you don't have a temporal match
+where start_info.id_end is not null
+;
+# Index creation
+alter table sirs
+	add index sirs_idx01(starttime),
+	add index sirs_idx02(endtime),
+	add index sirs_idx03(hadm_id)
+;
+```
+
+
 
 #### Create intervention intervals
 ##### Microbiology
