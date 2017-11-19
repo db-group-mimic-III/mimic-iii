@@ -307,7 +307,7 @@ create table sirs (
 # Inser values
 select start_info.hadm_id, 
 	start_info as starttime, 
-	end_info.charttime as end_time
+	end_info.charttime as endtime
 from abnorm_clin_val end_info
 right join ( 
 		select ab.* , 
@@ -356,7 +356,7 @@ and  SPEC_TYPE_DESC not in (
 	and SPEC_TYPE_DESC != 'Rapid Respiratory Viral Screen & Culture'
 	)
 ```
-#### Intervals of Anti-infective drugs used in the patient
+##### Intervals of Anti-infective drugs used in the patient
 
 ```SQL
 DROP TABLE IF EXISTS atb_interventions;
@@ -393,8 +393,48 @@ alter table atb_interventions
 	add index atb_interventions_val_idx03 (enddate)
 ;
 ```
+#### Search for SIRS intervals that are inside an antibiotic interval
+##### Evaluate query to restrict SIRS invervals
 
-
+```SQL
+select start_info.*, 
+end_info.category, 
+end_info.charttime as end_time, 
+end_info.valuenum, 
+timestampdiff(MINUTE, start_info.charttime, end_info.charttime) as time_diff_min
+from abnorm_clin_val end_info
+right join ( 
+		select ab.* , 
+# Create time interval for SIRS
+# obtain id of the next chartevent (the max charttime) that ocurred in the next hour and is not of the same category
+		(select  id_ab_clin
+		from abnorm_clin_val j
+		where j.category != ab.category
+		and timestampdiff(MINUTE, ab.charttime, j.charttime)  < 60
+		and timestampdiff(MINUTE, ab.charttime, j.charttime)  >=0
+		order by charttime desc
+		limit 1
+		) as id_end
+	from abnorm_clin_val ab
+	) start_info on end_info.id_ab_clin = start_info.id_end
+# Some charevents return NULL because you don't have a temporal match
+where start_info.id_end is not null
+# Time Interval defined for infection suspect
+and start_info.charttime >=  date_add(DATE_FORMAT('2110-02-21 15:33:00', '%Y-%c-%d %H:%i:%s'), interval -6 hour)
+and end_info.charttime < date_add(DATE_FORMAT('2110-02-21 15:33:00', '%Y-%c-%d %H:%i:%s'), interval 6 hour)
+# 
+order by start_info.charttime 
+```
+##### Search using tables SIRS and atb_interventions
+``` SQL
+select  sirs.*
+from sirs
+where  exists (select *  
+		from atb_interventions a
+		where sirs.starttime >= a.startdate
+		and sirs.endtime <= a.enddate)
+order by starttime
+```
 
 ## References 
   * Bone RC, Balk RA, Cerra FB, Dellinger RP, Fein AM, Knaus WA, Schein RM, Sibbald WJ. Definitions for sepsis and organ failure and guidelines for the use of innovative therapies in sepsis. The ACCP/SCCM Consensus Conference Committee. American College of Chest Physicians/Society of Critical Care Medicine.Chest. 1992 Jun;101(6):1644-55.
