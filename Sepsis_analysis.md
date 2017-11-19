@@ -306,7 +306,7 @@ create table sirs (
 
 # Inser values
 select start_info.hadm_id, 
-	start_info as starttime, 
+	start_info.charttime as starttime, 
 	end_info.charttime as endtime
 from abnorm_clin_val end_info
 right join ( 
