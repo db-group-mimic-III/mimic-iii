@@ -1,0 +1,10 @@
+-- Obtaining the outcome variable (mortality at 30days) by getting the date of death (DOD) 
+-- from patients and discharge time (Dischtime) from admission tables. And obtaing some of
+-- the predictor varible  
+
+
+Select (DOD- Dischtime) as postdischarge, 
+(intime-DOB) as age, gender, admission_type, first_careunit
+from patients a join admissions b using (subject_id)
+ join icustays c using (subject_id) 
+where postdischarge=30;
