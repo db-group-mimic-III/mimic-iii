@@ -51,14 +51,14 @@ left join (select  t.subject_id, case
 
 # Only patients over 15 years old
 where icu.subject_id in (select  subject_id
-										from
-											(select j.subject_id, timestampdiff(YEAR, p.dob, j.intime) as age_at_admission
-											from
-												(select subject_id, min(intime) as intime
-												from  icustays
-												group by subject_id) j
-											left join patients p on j.subject_id = p.subject_id) t
-										where t.age_at_admission > 15)
+			from
+				(select j.subject_id, timestampdiff(YEAR, p.dob, j.intime) as age_at_admission
+				from
+					(select subject_id, min(intime) as intime
+					from  icustays
+					group by subject_id) j
+				left join patients p on j.subject_id = p.subject_id) t
+			where t.age_at_admission > 15)
 ;
 
 ```
