@@ -4,9 +4,9 @@
 
 ```SQL
 select  *, case  
-					when t.age_at_admission > 150 then 91.4 
-					else t.age_at_admission 
-				END as corrected_age
+		when t.age_at_admission > 150 then 91.4 
+		else t.age_at_admission 
+		END as corrected_age
 from
 (select j.subject_id, timestampdiff(YEAR, p.dob, j.intime) as age_at_admission
   from
