@@ -241,3 +241,26 @@ alter table sirs
 	add index sirs_idx03(hadm_id)
 ;
 ```
+
+#### Alternative SIRS table, load from CSV file
+```SQL
+DROP TABLE IF EXISTS sirs;
+create table sirs (
+	sirs_id int primary key auto_increment,
+	hadm_id int,
+	starttime DATETIME(0),
+	endtime datetime(0)
+)
+;
+
+LOAD DATA LOCAL INFILE 'sirs.csv' INTO TABLE sirs
+   FIELDS TERMINATED BY ',' ESCAPED BY '\\' OPTIONALLY ENCLOSED BY '"'
+   LINES TERMINATED BY '\n'
+   IGNORE 1 LINES
+   (@hadm_id,@starttime, @endtime)
+ SET
+   hadm_id = @hadm_id,
+   starttime = @starttime,
+   endtime = @endtime
+   ;
+```
