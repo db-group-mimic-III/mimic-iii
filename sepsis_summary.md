@@ -263,4 +263,10 @@ LOAD DATA LOCAL INFILE 'sirs.csv' INTO TABLE sirs
    starttime = @starttime,
    endtime = @endtime
    ;
+# Index creation
+alter table sirs
+	add index sirs_idx01(starttime),
+	add index sirs_idx02(endtime),
+	add index sirs_idx03(hadm_id)
+;
 ```
