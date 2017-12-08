@@ -307,3 +307,13 @@ alter table atb_interventions
 	add index atb_interventions_val_idx03 (enddate)
 ;
 ```
+### Search for SIRS intervals that are inside an antibiotic interval (Sepsis)
+**Warning** Expensive query, took `XX` hours i7 MacBook Pro 15-inch 2017
+```SQL
+select  sirs.*
+from sirs
+where  exists (select *  
+		from atb_interventions a
+		where sirs.starttime >= a.startdate
+		and sirs.endtime < a.enddate)
+```
