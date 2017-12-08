@@ -318,3 +318,12 @@ where  exists (select *
 		and sirs.endtime < a.enddate)
 ```
 It returns `5,037` unique admissions, `97.2%` of the patients with ICD codes for sepis `5,183`
+
+|         | Admission Sepsis ICD + | Admission Sepsis ICD -            |
+| ------------|------------------| ---------------------|
+| *Predition +*| 5037 | 0 |
+| *Prediction -*|   146       | 0  |
+| *Total*     | 5183    |  0  |
+
+Sensitivity (Recall) = `97.1831%`
+Accuracy = `97.1831%`
