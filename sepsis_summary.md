@@ -270,3 +270,40 @@ alter table sirs
 	add index sirs_idx03(hadm_id)
 ;
 ```
+### Create intervention table
+
+```SQL
+DROP TABLE IF EXISTS atb_interventions;
+create table atb_interventions (
+	atb_int_id int primary key auto_increment,
+	hadm_id int,
+	drug varchar(50),
+	startdate datetime(0),
+	enddate datetime(0)
+)
+;
+insert into atb_interventions
+select NULL, j.*
+from
+(
+select hadm_id, drug, startdate, enddate
+from prescriptions
+# Retrieve only patients with sepsis
+where hadm_id in (
+	select hadm_id
+	from sepsis_patients where subject_id = 10188
+	)
+# Retrieve onyl anti infective drugs
+and ndc in (
+	select distinct ndc
+	from Anti_infective_drugs)
+order by startdate
+) j
+;
+# Index creation
+alter table atb_interventions
+	add index atb_interventions_val_idx01 (hadm_id),
+	add index atb_interventions_val_idx02 (startdate),
+	add index atb_interventions_val_idx03 (enddate)
+;
+```
