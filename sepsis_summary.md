@@ -201,7 +201,7 @@ alter table abnorm_clin_val
 ;
 ```
 ### Create SIRS table
-**Warning** expensive quey, took `xx` minutes i7 MacBook Pro 15-inch 2017
+**Warning** expensive quey, took `xx` days i7 MacBook Pro 15-inch 2017
 ```SQL
 DROP TABLE IF EXISTS sirs;
 create table sirs (
