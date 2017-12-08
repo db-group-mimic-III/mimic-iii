@@ -317,4 +317,4 @@ where  exists (select *
 		where sirs.starttime >= a.startdate
 		and sirs.endtime < a.enddate)
 ```
-It returns `5,037` unique admissions, `97.2% (5,183)` of the patients with ICD codes for sepis
+It returns `5,037` unique admissions, `97.2%` of the patients with ICD codes for sepis `5,183`
