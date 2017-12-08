@@ -308,7 +308,7 @@ alter table atb_interventions
 ;
 ```
 ### Search for SIRS intervals that are inside an antibiotic interval (Sepsis)
-**Warning** Expensive query, took `XX` hours i7 MacBook Pro 15-inch 2017
+**Warning** Expensive query, took `57` minutes i7 MacBook Pro 15-inch 2017
 ```SQL
 select  sirs.*
 from sirs
