@@ -319,6 +319,7 @@ where  exists (select *
 ```
 * It returns `5,037` unique admissions, `97.2%` of the patients with ICD codes for sepis `5,183`.
 * Only `5,048`unique admissions presented SIRS, `97.4%` of the patient with ICD codes for sepsis.
+* `93%` of Error corresponds to admissions that didn't have a SIRS episode according to our algorithm. Probably we should analyze the admissions to find insights about this error, maybe some of the admission didn't have a SIRS episode during their stay at ICU. Also, we could expand the 60 minutes window to improve sensitivity for SIRS, this will impact the specifitivity of the algorithm and shoulb be evaluated using AUC.
 
 |         | Admission Sepsis ICD + | Admission Sepsis ICD -            |
 | ------------|------------------| ---------------------|
