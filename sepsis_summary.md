@@ -90,6 +90,7 @@ LOAD DATA LOCAL INFILE 'anti_infective_drugs.csv' INTO TABLE anti_infective_drug
 
 ### Create abnormam clinical values table 
 **Warning** expensive query, took `6.3` minutes i7 MacBook Pro 15-inch 2017
+We created a table based off of the biometric values related to SIRS. To reduce the size of the table, we filted to ensure only abnormal values were included.
 ``` SQL
 DROP TABLE IF EXISTS abnorm_clin_val;
 
