@@ -240,7 +240,8 @@ create table sirs (
 
 # Inser values
 insert into sirs
-select NULL, x.*(
+select NULL, x.*
+from (
 select start_info.hadm_id, 
 	start_info.charttime as starttime, 
 	end_info.charttime as endtime
