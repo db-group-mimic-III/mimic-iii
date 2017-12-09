@@ -17,6 +17,10 @@ create table sepsis_patients (
 	age_admission_icu smallint
 )
 
+# Table J finds patients with sepsis or severe sepsis and the admission ID
+# Table T finds patients with sepsise or severe sepsis with their DOB
+# Table A is the patient table. we derived the length of stay from here
+# These tables are joined based off of their admission ID and is filtered to people older than 18
 # Insert data
 ;
 insert into sepsis_patients
@@ -63,7 +67,7 @@ alter table sepsis_patients
 ;
 
 ### Anti infective agents table
-
+# We added an additional table to our database that contained a comprehensive list of antiobiotic agents. This enabled us to more quickly find patiens that received antiobiotic therapy.
 DROP TABLE IF EXISTS Anti_infective_drugs;
 CREATE TABLE Anti_infective_drugs
 (
