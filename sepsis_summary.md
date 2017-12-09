@@ -1,4 +1,22 @@
 # Sepsis summary
+## Definition of sepsis
+Adult patient with a suspected or comprobated source of infection
+
+#### Systemic inflammatory response syndrome (SIRS)
+Clinical manifestations (two or more)
+  * Fever > 100.4 F or hypothermia < 98.6 F
+  * Leukocytosis > 12,000 cells/mm, Leukopenia < 4,000 cells/mm or >10% bands
+  * Tachycarida > 90
+  * Hyperventilation > 20 breaths per minute or PaCO2 < 32 mmHg
+
+### Codification of sepsis
+| Code        | Name of the code | Requires             |
+| ------------|------------------| ---------------------|
+| 995.90      | Unspecified SIRS | Underlying condition |
+| 995.91      | Sepsis (SIRS due to infectious process without organ dysfunction)           |  Underlying condition, then sepsis code  |
+| 995.92      | Severe sepsis (SIRS due to infectious process with organ dysfunction)    |  Underlying condition, severe sepsis code, then organ failure  |
+
+
 ## Create required tables
 
 ### Create sepsis_patients table
