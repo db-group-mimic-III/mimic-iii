@@ -293,7 +293,7 @@ where hadm_id in (
 	select hadm_id
 	from sepsis_patients where subject_id = 10188
 	)
-# Retrieve onyl anti infective drugs
+# Retrieve only anti infective drugs
 and ndc in (
 	select distinct ndc
 	from Anti_infective_drugs)
@@ -326,5 +326,5 @@ where  exists (select *
 | *Prediction -*|   146       | 0  |
 | *Total*     | 5183    |  0  |
 
-Sensitivity (Recall) = `97.1831%`
-Accuracy = `97.1831%`
+* Sensitivity (Recall) = `97.1831%`
+* Accuracy = `97.1831%`
