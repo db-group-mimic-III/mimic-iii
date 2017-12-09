@@ -85,7 +85,8 @@ alter table sepsis_patients
 ;
 
 ### Anti infective agents table
-# We added an additional table to our database that contained a comprehensive list of antiobiotic agents. This enabled us to more quickly find patiens that received antiobiotic therapy.
+# We added an additional table to our database that contained a comprehensive list
+# of antiobiotic agents. This enabled us to more quickly find patiens that received antiobiotic therapy.
 DROP TABLE IF EXISTS Anti_infective_drugs;
 CREATE TABLE Anti_infective_drugs
 (
@@ -108,7 +109,8 @@ LOAD DATA LOCAL INFILE 'anti_infective_drugs.csv' INTO TABLE anti_infective_drug
 
 ### Create abnormam clinical values table 
 **Warning** expensive query, took `6.3` minutes i7 MacBook Pro 15-inch 2017
-We created a table based off of the biometric values related to SIRS. To reduce the size of the table, we filted to ensure only abnormal values were included.
+We created a table based off of the biometric values related to SIRS. To reduce the size 
+of the table, we filted to ensure only abnormal values were included.
 ``` SQL
 DROP TABLE IF EXISTS abnorm_clin_val;
 
@@ -225,6 +227,7 @@ alter table abnorm_clin_val
 ```
 ### Create SIRS table
 **Warning** expensive quey, took `xx` days i7 MacBook Pro 15-inch 2017
+The Abnorm_clin_val table had 1.2 million rows. This query requried a line by line analysis of that table
 ```SQL
 DROP TABLE IF EXISTS sirs;
 create table sirs (
@@ -244,6 +247,8 @@ right join (
 		select ab.* , 
 # Create time interval for SIRS
 # obtain id of the next chartevent (the max charttime) that ocurred in the next hour and is not of the same category
+# The query is searching for values that are within 1 hour of eachother and returning the most recent timestamp
+# Recent time stamp in important for optimizing the window of comparison for antiobiotic administration.
 		(select  id_ab_clin
 		from abnorm_clin_val j
 		where j.category != ab.category
