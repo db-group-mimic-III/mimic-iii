@@ -323,7 +323,7 @@ from prescriptions
 # Retrieve only patients with sepsis
 where hadm_id in (
 	select hadm_id
-	from sepsis_patients where subject_id = 10188
+	from sepsis_patients
 	)
 # Retrieve only anti infective drugs
 and ndc in (
