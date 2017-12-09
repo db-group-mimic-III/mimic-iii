@@ -239,6 +239,8 @@ create table sirs (
 
 
 # Inser values
+insert into sirs
+select NULL, x.*(
 select start_info.hadm_id, 
 	start_info.charttime as starttime, 
 	end_info.charttime as endtime
@@ -261,6 +263,7 @@ right join (
 	) start_info on end_info.id_ab_clin = start_info.id_end
 # Some charevents return NULL because you don't have a temporal match
 where start_info.id_end is not null
+) x
 ;
 # Index creation
 alter table sirs
