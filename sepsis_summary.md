@@ -75,6 +75,14 @@ alter table sepsis_patients
 	add index sepsis_patients_idx02 (intime)
 ;
 ```
+#### Drugs to suspect infection
+Only consider IV or IM routes for Anti-infective agents because represents the severity of the suspected infection
+```SQL
+select distinct GSN, drug 
+from PRESCRIPTIONS
+where route like 'IV' 
+or route like 'IM';
+```
 
 ### Create anti infective agents table 
 ```SQL
