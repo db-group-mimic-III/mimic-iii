@@ -317,8 +317,8 @@ where  exists (select *
 		where sirs.starttime >= a.startdate
 		and sirs.endtime < a.enddate)
 ```
-It returns `5,037` unique admissions, `97.2%` of the patients with ICD codes for sepis `5,183`
-Only `5,048`unique admissions presented SIRS, `97.4%` of the patient with ICD codes for sepsis.
+* It returns `5,037` unique admissions, `97.2%` of the patients with ICD codes for sepis `5,183`.
+* Only `5,048`unique admissions presented SIRS, `97.4%` of the patient with ICD codes for sepsis.
 
 |         | Admission Sepsis ICD + | Admission Sepsis ICD -            |
 | ------------|------------------| ---------------------|
