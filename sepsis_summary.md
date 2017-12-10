@@ -102,7 +102,7 @@ where route like 'IV'
 or route like 'IM';
 ```
 
-### Create anti infective agents table nsinve
+### Create anti infective agents table
 Table contains a comprehensive list of all antiobiotics used.
 ```SQL
 alter table sepsis_patients
@@ -113,7 +113,7 @@ alter table sepsis_patients
 
 ### Anti infective agents table
 # We added an additional table to our database that contained a comprehensive list
-# of antiobiotic agents. This enabled us to more quickly find patiens that received antiobiotic therapy.
+# of antiobiotic agents. This enabled us to more quickly find patients that received antiobiotic therapy.
 DROP TABLE IF EXISTS Anti_infective_drugs;
 CREATE TABLE Anti_infective_drugs
 (
@@ -134,7 +134,7 @@ LOAD DATA LOCAL INFILE 'anti_infective_drugs.csv' INTO TABLE anti_infective_drug
    ;
 ```
 
-### Create abnormam clinical values table 
+### Create abnormal clinical values table 
 **Warning** expensive query, took `6.3` minutes i7 MacBook Pro 15-inch 2017
 We created a table based off of the biometric values related to SIRS. To reduce the size 
 of the table, we filted to ensure only abnormal values were included.
@@ -253,7 +253,7 @@ alter table abnorm_clin_val
 ;
 ```
 ### Create SIRS table
-**Warning** expensive quey, took `xx` days i7 MacBook Pro 15-inch 2017
+**Warning** expensive query, took `xx` days i7 MacBook Pro 15-inch 2017
 The Abnorm_clin_val table had 1.2 million rows. This query requried a line by line analysis of that table
 ```SQL
 DROP TABLE IF EXISTS sirs;
