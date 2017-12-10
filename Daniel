@@ -64,4 +64,24 @@ from chartevents
 where itemid in( 778,  3784, 3835)
 group by ITEMID;
 
+
 ```
+#### Create intervention intervals
+##### Microbiology
+Microbiology time is difficult to interpret, we don't know if the time represents the result or the time when it was taken.
+``` SQL
+# Microbiology time is difficult to interpret 
+select hadm_id, chartdate, charttime, SPEC_itemid, SPEC_TYPE_DESC, org_itemid
+from microbiologyevents
+# Retrieve only patients with sepsis
+where hadm_id in (
+	select hadm_id
+	from sepsis_patients where subject_id = 10188
+	)
+# Exclude MRS screenng and other screening, they are routine in hospitals
+and  SPEC_TYPE_DESC not in (
+	select distinct SPEC_TYPE_DESC
+	from microbiologyevents
+	where SPEC_TYPE_DESC like '%screen%' 
+	and SPEC_TYPE_DESC != 'Rapid Respiratory Viral Screen & Culture'
+	
