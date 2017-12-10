@@ -14,18 +14,20 @@ Clinical Terminology:
 * Tachycardia – High heart rate
 * Hyperventilation – excessive breathing
 * PaCO2 Blood measurement of carbon dioxide. Chemical measurement of breathing
+* IM - Intramuscular - Drug delivery method that goes directly into the muscle
+* IV - Intravenous - Drug delivery method that goes directly into the blood stream. 
 
 
 Adult patient with a suspected or comprobated source of infection
 
 #### Systemic inflammatory response syndrome (SIRS)
-Clinical manifestations (two or more)
+SIRS is clinically defined as having 2 or more of the following
   * Fever > 100.4 F or hypothermia < 98.6 F
   * Leukocytosis > 12,000 cells/mm, Leukopenia < 4,000 cells/mm or >10% bands
   * Tachycarida > 90
   * Hyperventilation > 20 breaths per minute or PaCO2 < 32 mmHg
 
-### Codification of sepsis
+### Sepsis codes
 | Code        | Name of the code | Requires             |
 | ------------|------------------| ---------------------|
 | 995.90      | Unspecified SIRS | Underlying condition |
@@ -92,7 +94,7 @@ alter table sepsis_patients
 ;
 ```
 #### Drugs to suspect infection
-Only consider IV or IM routes for Anti-infective agents because represents the severity of the suspected infection
+We filted antibiotic use by the two delivery rountes that are standard for sepis patients.
 ```SQL
 select distinct GSN, drug 
 from PRESCRIPTIONS
@@ -100,7 +102,8 @@ where route like 'IV'
 or route like 'IM';
 ```
 
-### Create anti infective agents table 
+### Create anti infective agents table nsinve
+Table contains a comprehensive list of all antiobiotics used.
 ```SQL
 alter table sepsis_patients
 	add index sepsis_patients_idx01 (subject_id, hadm_id),
