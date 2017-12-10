@@ -96,7 +96,7 @@ alter table sepsis_patients
 #### Drugs to suspect infection
 We filted antibiotic use by the two delivery rountes that are standard for sepis patients.
 ```SQL
-select distinct GSN, drug 
+select distinct NDC, drug 
 from PRESCRIPTIONS
 where route like 'IV' 
 or route like 'IM';
