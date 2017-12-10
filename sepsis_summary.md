@@ -43,7 +43,7 @@ DROP TABLE IF EXISTS sepsis_patients;
 
 # Used datetime instead of timestamp because the first offers a bigger range.
 create table sepsis_patients (
-	id_ab_clin int PRIMARY KEY AUTO_INCREMENT,
+	id_sepsis_admission int PRIMARY KEY AUTO_INCREMENT,
 	hadm_id int,
 	intime DATETIME(0),
 	outtime DATETIME(0),
@@ -60,7 +60,7 @@ create table sepsis_patients (
 # Insert data
 ;
 insert into sepsis_patients
-select * 
+select NULL, temp.* 
 from
 (
 select j.hadm_id, a.intime, 
