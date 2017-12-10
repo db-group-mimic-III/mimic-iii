@@ -3,7 +3,7 @@
 
 Executive Summary
 
-Sepsis as a life-threatening complication related to infection. It occurs when the body induces a systemic inflammatory response (SIRS) that can result in damage to multiple organ systems. Sepsis is a two-part condition, SIRS and the presence of an infection. Our queries created an algorithm that found patients with sepsis according to the biological parameters as opposed to using ICD9 codes. The accuracy of the algorithm was 97.2. We found that 0.2% of patients diagnosed with sepsis did not have the SIRS. We attribute this to possible hospital transfers where the patient had SIRS and possibly sepsis prior to entering the ICU. The remaining 2.4% is likely due to our discretionary time window. With minor changes, this algorithm could realistically be used to extract sepsis patient information for a more in-depth analysis. Mario is a physician, and had previously worked with MIMICII. Due to this group dynamic characteristic, we wanted to do an advanced query that has potential clinical application. 
+Sepsis is a life-threatening complication related to infection. It occurs when the body induces a systemic inflammatory response (SIRS) that can damage multiple organ systems. Sepsis is a two-part condition (i.e. SIRS and the presence of an infection). Our queries created an algorithm that found patients with sepsis according to the biological parameters as opposed to using ICD9 codes. The accuracy of the algorithm was 97.2. We found that 0.2% of patients diagnosed with sepsis did not have the SIRS. We attributed this to possible hospital transfers where the patient had SIRS and possibly sepsis prior to entering the ICU. The remaining 2.6% is likely due to our discretionary time window. With minor changes, this algorithm could realistically be used to extract sepsis patient information for a more in-depth analysis. One of our group member, Mario is a physician, and had previously worked with MIMICII. Due to this group dynamic characteristic, we wanted to do an advanced query that has potential clinical application. 
 
 Clinical Terminology:
 * Hyperthermia – “fever”, elevated temperature
@@ -55,7 +55,7 @@ create table sepsis_patients (
 
 # Table J finds patients with sepsis or severe sepsis and the admission ID
 # Table T finds patients with sepsise or severe sepsis with their DOB
-# Table A is the patient table. we derived the length of stay from here
+# Table A is the icustays table, contaning patient information, we derived the length of stay from here
 # These tables are joined based off of their admission ID and is filtered to people older than 18
 # Insert data
 ;
