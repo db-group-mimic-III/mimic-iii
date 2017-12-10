@@ -68,7 +68,7 @@ group by ITEMID;
 ```
 #### Create intervention intervals
 ##### Microbiology
-The second half of Sepsis is having an infection. Physicians generally administer an antiobiotic proactively while a microbiolgy lab is being performed to confirm a bacterial presence. While a positive microbiology result would be a true positive, the extended length of time required to perform the test makes it difficult to practically create a sensitve algorithm. Additionally, we cannot be sure whether the timestamp was for when the test was performed, or when the result came back. Since a microbiology report takes over 24 hrs to process, this difference was important. Additionally, Charttime was not consistently recorded in the microbiology table. This also prevented us from depending on these results for our algorithm. 
+The second half of Sepsis is having an infection. Physicians generally administer an antiobiotic proactively while a microbiolgy lab is being performed to confirm a bacterial presence. While a positive microbiology result would be a true positive, the extended length of time required to perform the test makes it difficult to practically create a sensitve algorithm. Additionally, we cannot be sure whether the timestamp was for when the test was performed, or when the result came back. Since a microbiology report takes up to 48 hrs to process, this difference was important. Additionally, Charttime was not consistently recorded in the microbiology table. This also prevented us from depending on these results for our algorithm. 
 ``` SQL
 # Microbiology time is difficult to interpret 
 select hadm_id, chartdate, charttime, SPEC_itemid, SPEC_TYPE_DESC, org_itemid
