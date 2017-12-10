@@ -1,5 +1,21 @@
 # Sepsis summary
 ## Definition of sepsis
+
+Executive Summary
+
+Sepsis as a life-threatening complication related to infection. It occurs when the body induces a systemic inflammatory response (SIRS) that can result in damage to multiple organ systems. Sepsis is a two-part condition, SIRS and the presence of an infection. Our queries created an algorithm that found patients with sepsis according to the biological parameters as opposed to using ICD9 codes. The accuracy of the algorithm was 97.2. We found that 0.2% of patients diagnosed with sepsis did not have the SIRS. We attribute this to possible hospital transfers where the patient had SIRS and possibly sepsis prior to entering the ICU. The remaining 2.4% is likely due to our discretionary time window. With minor changes, this algorithm could realistically be used to extract sepsis patient information for a more in-depth analysis. Mario is a physician, and had previously worked with MIMICII. Due to this group dynamic characteristic, we wanted to do an advanced query that has potential clinical application. 
+
+Clinical Terminology:
+Hyperthermia – “fever”, elevated temperature
+Hypothermia – reduced body temperature
+Leukocytosis – High white blood cell count
+Leukopenia – Low white blood cell count
+Bands – A premature white blood cell
+Tachycardia – High heart rate
+Hyperventilation – excessive breathing
+PaCO2 Blood measurement of carbon dioxide. Chemical measurement of breathing
+
+
 Adult patient with a suspected or comprobated source of infection
 
 #### Systemic inflammatory response syndrome (SIRS)
