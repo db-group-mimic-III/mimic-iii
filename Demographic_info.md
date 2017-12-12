@@ -23,3 +23,17 @@ where ethnicity like "Asian%"
 group by ethnicity
 order by ethnicity
 ;
+
+SELECT
+  COUNT(*),
+  CASE
+    WHEN age_admission_icu>=18 AND age_admission_icu <=25 THEN '18-25' # 67
+    WHEN age_admission_icu >=26 AND age_admission_icu <=34 THEN '26-34' # 183
+    WHEN age_admission_icu >=35 AND age_admission_icu <=54 THEN '35-54' # 1135
+    WHEN age_admission_icu >=55 AND age_admission_icu <=64 THEN '55-64'# 1212
+    WHEN age_admission_icu >=65 AND age_admission_icu <=80 THEN '65-80' # 2086
+    WHEN age_admission_icu >=81 THEN '81+' # 1293
+  END AS age_groups
+FROM sepsis_patients
+group by age_groups
+        ;
