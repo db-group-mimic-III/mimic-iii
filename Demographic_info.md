@@ -13,7 +13,8 @@ on s.subject_id=p.subject_id
 group by gender
 ;
 
-# There are multiple sub-ethnicities in this query. How what type of command to I do to get them all to be counted as the same type? 
+# There are multiple sub-ethnicities in this query. How what type of command to I do to
+get them all to be counted as the same type? 
 Select a.ethnicity,count(ethnicity)
 from sepsis_patients S 
 left join admissions a
