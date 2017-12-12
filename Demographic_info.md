@@ -1,7 +1,6 @@
 !!! I created the sepsis_patient table using Mario's code. When counting unique HADM_ID's and subject_Id's I got a count of 5976 This is more than what sepsis summary says is our patient total !!!
 
-````
-Sql
+````Sql
 select distinct count(subject_id)
 from sepsis_patients # count is 5976
 ;
