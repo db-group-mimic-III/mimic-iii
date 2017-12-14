@@ -101,8 +101,8 @@ group by hadm_id
 ------------------------------------
 --- BEGIN EXTRACTION OF VITALS
 ------------------------------------
-, small_chartevents as
-(select icustay_id,
+create table small_charevents as
+select hadm_id,
         case
          when itemid in (211, 220045) then 'hr'
          when itemid in (52,456, 220052) then 'map'  -- invasive and noninvasive measurements are combined
@@ -112,38 +112,21 @@ group by hadm_id
          when itemid in (618, 220210) then 'rr'
         end as type,                
         charttime,
-        value1num
+        valuenum
  from mimiciiiv13.chartevents l
  where itemid in (211,51,52,455,456,678,679,646,618,220045,220052,220050,223761,220210 )-- note: dont have spo2 value yet
-   and icustay_id in (select icustay_id from static_data) 
-   and value1num is not null
-)
---select * from small_chartevents;
+   and hadm_id in (142345, 198042) 
+   and valuenum is not null
+;
+create table vitals_raw as
+select a.*
+from small_charevents a, (
+				select hadm_id, type, min(charttime) as min_charttime
+				from small_charevents 
+				group by hadm_id, type
+				) b
+where a.hadm_id = b.hadm_id and a.type = b.type and a.charttime = b.min_charttime
 
-, vitals_raw as
-(select distinct icustay_id,        
-        type,
-        first_value(value1num) over (partition by icustay_id, type order by charttime) as first_value
- from small_chartevents 
-)
---select * from vitals_raw;
-
-, vitals as
-(select *
- from (select * from vitals_raw)
-      pivot
-      (sum(round(first_value,1)) as admit
-       for type in 
-       ('hr' as hr,
-        'map' as map,
-        'sbp' as sbp,
-        'temp' as temp,
-        'spo2' as spo2,
-        'rr' as rr
-       )
-      )
-)
---select * from vitals;
 ------------------------------------
 --- END OF EXTRACTION OF VITALS
 ------------------------------------
@@ -152,7 +135,7 @@ group by hadm_id
 select *
 from
 (
-select icustay_id,
+select hadm_id,
 			sum(case type when 'hr' then valuenum else NULL END) as 'hr',
 			sum(case type when 'map' then valuenum else NULL END) as 'map',
 			sum(case type when 'sbp' then valuenum else NULL END) as 'sbp',
@@ -160,7 +143,7 @@ select icustay_id,
 			sum(case type when 'spo2' then valuenum else NULL END) as 'spo2',
 			sum(case type when 'rr' then valuenum else NULL END) as 'rr'
 from vitals_raw
-group by icustay_id
+group by hadm_id
 ) z,
 (
 select  hadm_id,
