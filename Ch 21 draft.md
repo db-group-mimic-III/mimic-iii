@@ -1,5 +1,5 @@
 -- This query extracts data for the tutorial in the clinical data analytics book chapter. Only the first icu stays from adult patients are extracted.
-
+````sql
 create view static_data as
 select icu.subject_id,
 			icu.hadm_id,
@@ -30,7 +30,7 @@ left join (select  t.subject_id,
 				group by subject_id) j
 			left join patients p on j.subject_id = p.subject_id) t
 			where t.age_at_admission > 15) x on icu.subject_id = x.subject_id
-
+			
 # Only patients over 15 years old
 where icu.subject_id in (select  subject_id
 			from
@@ -173,3 +173,4 @@ create view labs as
  left join labs l on s.icustay_id=l.icustay_id 
 )
 select * from final_data order by 1,2,3;
+````
