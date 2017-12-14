@@ -147,31 +147,36 @@ group by hadm_id
 ------------------------------------
 --- END OF EXTRACTION OF VITALS
 ------------------------------------
+# Assemble table
 
--- Assemble final data
-, final_data as
-(select s.*,
-        v.hr_admit,
-        v.map_admit,
-        v.sbp_admit,
-        v.temp_admit,
-        v.spo2_admit,       
-        v.rr_admit,       
-        l.cr_admit, 
-        l.k_admit,
-        l.na_admit,
-        l.cl_admit,
-        l.bicarb_admit,
-        l.hct_admit,
-        l.wbc_admit,
-        l.glucose_admit,
-        l.mg_admit,
-        l.ca_admit,
-        l.p_admit,
-        l.lactate_admit
- from static_data s
- left join vitals v on s.icustay_id=v.icustay_id 
- left join labs l on s.icustay_id=l.icustay_id 
-)
-select * from final_data order by 1,2,3;
-````
+select *
+from
+(
+select icustay_id,
+			sum(case type when 'hr' then valuenum else NULL END) as 'hr',
+			sum(case type when 'map' then valuenum else NULL END) as 'map',
+			sum(case type when 'sbp' then valuenum else NULL END) as 'sbp',
+			sum(case type when 'temp' then valuenum else NULL END) as 'temp',
+			sum(case type when 'spo2' then valuenum else NULL END) as 'spo2',
+			sum(case type when 'rr' then valuenum else NULL END) as 'rr'
+from vitals_raw
+group by icustay_id
+) z,
+(
+select  hadm_id,
+			sum(case itemid when 50912 then valuenum else NULL END) as cr,
+			sum(case itemid when 50971 then valuenum else NULL END) as k,
+			sum(case itemid when 50983 then valuenum else NULL END) as na,
+			sum(case itemid when 50902 then valuenum else NULL END) as cl,
+			sum(case itemid when 50882 then valuenum else NULL END) as bicarb,
+			sum(case itemid when 51221 then valuenum else NULL END) as htc,
+			sum(case itemid when 51300 then valuenum else NULL END) as wbc,
+			sum(case itemid when 50931 then valuenum else NULL END) as glucose,
+			sum(case itemid when 50960 then valuenum else NULL END) as mg,
+			sum(case itemid when 50893 then valuenum else NULL END) as ca,
+			sum(case itemid when 50970 then valuenum else NULL END) as p,
+			sum(case itemid when 50813 then valuenum else NULL END) as lactate
+from  labs_raw 
+group by hadm_id
+) y
+where z.hadm_id = y.hadm_id
