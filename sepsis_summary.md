@@ -3,7 +3,7 @@
 
 Executive Summary
 
-Sepsis is a life-threatening complication related to infection. It occurs when the body induces a systemic inflammatory response (SIRS) that can damage multiple organ systems. Sepsis is a two-part condition (i.e. SIRS and the presence of an infection). Our queries created an algorithm that found patients with sepsis according to the biological parameters as opposed to using ICD9 codes. The accuracy of the algorithm was 97.2. We found that 0.2% of patients diagnosed with sepsis did not have the SIRS. We attributed this to possible hospital transfers where the patient had SIRS and possibly sepsis prior to entering the ICU. The remaining 2.6% is likely due to our discretionary time window. With minor changes, this algorithm could realistically be used to extract sepsis patient information for a more in-depth analysis. One of our group member, Mario is a physician, and had previously worked with MIMICII. Due to this group dynamic characteristic, we wanted to do an advanced query that has potential clinical application. 
+Sepsis is a life-threatening complication related to infection. It occurs when the body induces a systemic inflammatory response (SIRS) that can damage multiple organ systems. Sepsis is a two-part condition (i.e. SIRS and the presence of an infection). Our queries created an algorithm that found patients with sepsis according to the biological parameters as opposed to using ICD9 codes. The accuracy of the algorithm was 97.4. We found that 0.2% of patients diagnosed with sepsis did not have the SIRS. We attributed this to possible hospital transfers where the patient had SIRS and possibly sepsis prior to entering the ICU. The remaining 2.4% is likely due to our discretionary time window. With minor changes, this algorithm could realistically be used to extract sepsis patient information for a more in-depth analysis. One of our group member, Mario is a physician, and had previously worked with MIMICII. Due to this group dynamic characteristic, we wanted to do an advanced query that has potential clinical application. 
 
 Clinical Terminology:
 * Hyperthermia – “fever”, elevated temperature
@@ -18,7 +18,7 @@ Clinical Terminology:
 * IV - Intravenous - Drug delivery method that goes directly into the blood stream. 
 
 
-Adult patient with a suspected or comprobated source of infection
+Adult patient with a suspected source of infection
 
 #### Systemic inflammatory response syndrome (SIRS)
 SIRS is clinically defined as having 2 or more of the following
@@ -41,7 +41,7 @@ SIRS is clinically defined as having 2 or more of the following
 ```SQL
 DROP TABLE IF EXISTS sepsis_patients;
 
-# Used datetime instead of timestamp because the first offers a bigger range.
+# Used datetime instead of timestamp because the first offers a range is consistent with the patient annonymization process.
 create table sepsis_patients (
 	id_sepsis_admission int PRIMARY KEY AUTO_INCREMENT,
 	hadm_id int,
@@ -94,7 +94,7 @@ alter table sepsis_patients
 ;
 ```
 #### Drugs to suspect infection
-We filted antibiotic use by the two delivery rountes that are standard for sepis patients.
+We filtered antibiotic use by the two delivery rountes that are standard for sepis patients.
 ```SQL
 select distinct NDC, drug 
 from PRESCRIPTIONS
@@ -103,7 +103,8 @@ or route like 'IM';
 ```
 
 ### Create anti infective agents table
-Table contains a comprehensive list of all antiobiotics used.
+Table contains a comprehensive list of all antiobiotics used whiich enabled us to more quickly find patients that received antiobiotic therapy.
+This table was imported into the database separate from MIMIC
 ```SQL
 alter table sepsis_patients
 	add index sepsis_patients_idx01 (subject_id, hadm_id),
@@ -112,8 +113,6 @@ alter table sepsis_patients
 ;
 
 ### Anti infective agents table
-# We added an additional table to our database that contained a comprehensive list
-# of antiobiotic agents. This enabled us to more quickly find patients that received antiobiotic therapy.
 DROP TABLE IF EXISTS Anti_infective_drugs;
 CREATE TABLE Anti_infective_drugs
 (
@@ -253,7 +252,7 @@ alter table abnorm_clin_val
 ;
 ```
 ### Create SIRS table
-**Warning** expensive query, took `xx` days i7 MacBook Pro 15-inch 2017
+**Warning** expensive query, took days for i7 MacBook Pro 15-inch 2017
 The Abnorm_clin_val table had 1.2 million rows. This query requried a line by line analysis of that table
 ```SQL
 DROP TABLE IF EXISTS sirs;
@@ -264,8 +263,12 @@ create table sirs (
 	endtime datetime(0)
 )
 
+# Create time interval for SIRS
+# obtain id of the next chartevent (the max charttime) that ocurred in the next hour and is not of the same category
+# The query is searching for values that are within 1 hour of eachother and returning the most recent timestamp
+# Recent time stamp is important for optimizing the window of comparison for antiobiotic administration.
 
-# Inser values
+# Insert values
 insert into sirs
 select NULL, x.*
 from (
@@ -275,10 +278,7 @@ select start_info.hadm_id,
 from abnorm_clin_val end_info
 right join ( 
 		select ab.* , 
-# Create time interval for SIRS
-# obtain id of the next chartevent (the max charttime) that ocurred in the next hour and is not of the same category
-# The query is searching for values that are within 1 hour of eachother and returning the most recent timestamp
-# Recent time stamp in important for optimizing the window of comparison for antiobiotic administration.
+
 		(select  id_ab_clin
 		from abnorm_clin_val j
 		where j.category != ab.category
@@ -289,10 +289,12 @@ right join (
 		) as id_end
 		from abnorm_clin_val ab
 	) start_info on end_info.id_ab_clin = start_info.id_end
-# Some charevents return NULL because you don't have a temporal match
 where start_info.id_end is not null
 ) x
+# Some charevents return NULL because the abnormal values were not recoreded within an hr of eachother.
+
 ;
+
 # Index creation
 alter table sirs
 	add index sirs_idx01(starttime),
@@ -302,6 +304,7 @@ alter table sirs
 ```
 
 #### Alternative SIRS table, load from CSV file
+# Adding this table enabled us to run different queries on the data we dervied from the SIRS query
 ```SQL
 DROP TABLE IF EXISTS sirs;
 create table sirs (
