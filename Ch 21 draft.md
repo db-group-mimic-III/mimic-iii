@@ -115,7 +115,7 @@ select hadm_id,
         valuenum
  from mimiciiiv13.chartevents l
  where itemid in (211,51,52,455,456,678,679,646,618,220045,220052,220050,223761,220210 )-- note: dont have spo2 value yet
-   and hadm_id in (142345, 198042) 
+   and hadm_id in (select hadm_id from static_data) 
    and valuenum is not null
 ;
 create table vitals_raw as
