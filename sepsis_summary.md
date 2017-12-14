@@ -334,6 +334,7 @@ alter table sirs
 ```
 ### Create intervention table
 **Warning** query took `2.8` minutes i7 MacBook Pro 15-inch 2017. `61,466` rows.
+Finding SIRS patients who were administered antibiotics.
 ```SQL
 DROP TABLE IF EXISTS atb_interventions;
 create table atb_interventions (
