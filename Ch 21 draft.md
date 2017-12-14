@@ -64,34 +64,35 @@ select * from labevents_21;
 
 -- ****************** look at code!
 
- create view labs_raw as
- select hadm_id, min(charttime), itemid
-from labevents_21
-group by hadm_id, itemid
+ create table labs_raw as
+select a.*
+from labevents_21 a, (
+	select hadm_id, itemid , min(charttime) as min_charrtime
+	from labevents_21
+	group by hadm_id, itemid
+									) b
+where a.hadm_id = b.hadm_id and a.itemid = b.itemid and a.charttime = b.min_charrtime
+
+
 ;
 select * from labs_raw;
 
-create view labs as
-(select *
- from (select * from labs_raw)
-      pivot table
-      (sum(round(first_value,1)) as admit       
-       for itemid in 
-       ('50912' as cr, -- changed values to mimiciii
-        '50971' as k,
-        '50983' as na,
-        '50902' as cl,
-        '50882' as bicarb,
-        '51221' as hct,
-        '51300' as wbc,
-        '50931' as glucose,
-        '50960' as mg,
-        '50893' as ca,
-        '50970' as p,
-        '50813' as lactate
-       )
-      )
-)
+select  hadm_id,
+			sum(case itemid when 50912 then valuenum else NULL END) as cr,
+			sum(case itemid when 50971 then valuenum else NULL END) as k,
+			sum(case itemid when 50983 then valuenum else NULL END) as na,
+			sum(case itemid when 50902 then valuenum else NULL END) as cl,
+			sum(case itemid when 50882 then valuenum else NULL END) as bicarb,
+			sum(case itemid when 51221 then valuenum else NULL END) as htc,
+			sum(case itemid when 51300 then valuenum else NULL END) as wbc,
+			sum(case itemid when 50931 then valuenum else NULL END) as glucose,
+			sum(case itemid when 50960 then valuenum else NULL END) as mg,
+			sum(case itemid when 50893 then valuenum else NULL END) as ca,
+			sum(case itemid when 50970 then valuenum else NULL END) as p,
+			sum(case itemid when 50813 then valuenum else NULL END) as lactate
+from  labs_raw 
+group by hadm_id
+;
 --select * from labs;
 ------------------------------
 --- END OF EXTRACTION OF LABS
