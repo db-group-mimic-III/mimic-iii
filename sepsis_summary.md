@@ -304,7 +304,7 @@ alter table sirs
 ```
 
 #### Alternative SIRS table, load from CSV file
-# Adding this table enabled us to run different queries on the data we dervied from the SIRS query
+Adding this table enabled us to run different queries on the data we dervied from the SIRS query
 ```SQL
 DROP TABLE IF EXISTS sirs;
 create table sirs (
