@@ -68,10 +68,9 @@ create table labevents_21 as
 ;
 # Index creation
 alter table labevents_21
-	add index labevents_21_idx01 (subject_id),
-	add index labevents_21_idx02 (hadm_id),
-	add index labevents_21_idx03 (charttime)
-	;
+	add index labevents_21_idx01 (hadm_id),
+	add index labevents_21_idx02 (charttime)
+;
 
 
 
@@ -79,18 +78,16 @@ DROP TABLE IF EXISTS labs_raw;
  create table labs_raw as
 select a.*
 from labevents_21 a, (
-	select ICUSTAY_ID, itemid , min(charttime) as min_charrtime
+	select hadm_id, itemid , min(charttime) as min_charrtime
 	from labevents_21
-	group by ICUSTAY_ID, itemid
+	group by hadm_id, itemid
 									) b
-where a.ICUSTAY_ID = b.ICUSTAY_ID and a.itemid = b.itemid and a.charttime = b.min_charrtime
+where a.hadm_id = b.hadm_id and a.itemid = b.itemid and a.charttime = b.min_charrtime
 ;
 # Index creation
-alter table labevents_21
-	add index labs_raw_idx01 (subject_id),
-	add index labs_raw_idx02 (hadm_id),
-	add index labs_raw_idx03 (ICUSTAY_ID),
-	add index labs_raw_idx04 (itemid)
+alter table labs_raw
+	add index labs_raw_idx01 (hadm_id),
+	add index labs_raw_idx02 (itemid)
 ;
 
 select * from labs_raw;
