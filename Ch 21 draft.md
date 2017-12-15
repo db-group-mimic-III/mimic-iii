@@ -1,3 +1,5 @@
+*Mario Barbé, Daniel Buchenberger, Robert Talum
+
 -- This query extracts data for the tutorial in the clinical data analytics book chapter. Only the first icu stays from adult patients are extracted.
 **Metrics**
 * `static_data` have `53,423` rows. Took `180` seconds.
