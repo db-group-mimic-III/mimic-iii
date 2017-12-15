@@ -4,6 +4,8 @@
 * `labevents_21` have `5,429,341` rows. Took `80` seconds.
 * `labs_raw` have `473,099` rows. Took `36` seconds.
 * `small_charevents` have `27,020,302` rows. Took `589` seconds.
+* `vitals_raw` have `249,167` rows. Took `90` seconds.
+* `vitals_raw` have `48,877` rows. Took `3.5` seconds.
 ````sql
 DROP TABLE IF EXISTS static_data;
 create table static_data as
@@ -167,12 +169,13 @@ alter table vitals_raw
 ------------------------------------
 --- END OF EXTRACTION OF VITALS
 ------------------------------------
-# Assemble table
+DROP TABLE IF EXISTS assemble;
+create table assemble as
 
-select *
+select y.*, z.hr, z.map, z.sbp, z.temp, z.spo2, z.rr
 from
 (
-select ICUSTAY_ID,
+select hadm_id,
 			sum(case type when 'hr' then valuenum else NULL END) as 'hr',
 			sum(case type when 'map' then valuenum else NULL END) as 'map',
 			sum(case type when 'sbp' then valuenum else NULL END) as 'sbp',
@@ -180,10 +183,10 @@ select ICUSTAY_ID,
 			sum(case type when 'spo2' then valuenum else NULL END) as 'spo2',
 			sum(case type when 'rr' then valuenum else NULL END) as 'rr'
 from vitals_raw
-group by ICUSTAY_ID
+group by hadm_id
 ) z,
 (
-select  ICUSTAY_ID,
+select  hadm_id,
 			sum(case itemid when 50912 then valuenum else NULL END) as cr,
 			sum(case itemid when 50971 then valuenum else NULL END) as k,
 			sum(case itemid when 50983 then valuenum else NULL END) as na,
@@ -197,6 +200,6 @@ select  ICUSTAY_ID,
 			sum(case itemid when 50970 then valuenum else NULL END) as p,
 			sum(case itemid when 50813 then valuenum else NULL END) as lactate
 from  labs_raw 
-group by ICUSTAY_ID
+group by hadm_id
 ) y
-where z.ICUSTAY_ID = y.ICUSTAY_ID
+where z.hadm_id = y.hadm_id
