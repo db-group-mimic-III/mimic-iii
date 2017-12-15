@@ -1,6 +1,6 @@
 -- This query extracts data for the tutorial in the clinical data analytics book chapter. Only the first icu stays from adult patients are extracted.
 ````sql
-DROP TABLE IF EXISTS static_data
+DROP TABLE IF EXISTS static_data;
 create table static_data as
 select icu.subject_id,
 			icu.hadm_id,
@@ -46,7 +46,7 @@ where icu.subject_id in (select  subject_id
 # Index creation
 alter table static_data
 	add index static_data_idx01 (subject_id),
-	add index static_data_idx02 (hadm_id)
+	add index static_data_idx02 (hadm_id),
 	add index static_data_idx03 (ICUSTAY_ID)
 	
 ;
