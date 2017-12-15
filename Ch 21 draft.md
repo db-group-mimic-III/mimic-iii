@@ -68,7 +68,7 @@ create table labevents_21 as
         charttime,
         valuenum
  from mimiciiiv13.labevents l
- where itemid in (50912, 50971, 50983, 509802, 50882, 51221, 51300, 50931, 50960, 50893, 50970, 50813)
+ where itemid in (50912, 50971, 50983, 509802, 50882, 51221, 51300, 50931, 50960, 50893, 50970, 50813, 50902)
    and hadm_id in (select hadm_id from static_data) 
    and valuenum is not null
 )
