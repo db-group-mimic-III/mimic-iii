@@ -1,11 +1,11 @@
 -- This query extracts data for the tutorial in the clinical data analytics book chapter. Only the first icu stays from adult patients are extracted.
 **Metrics**
 * `static_data` have `53,423` rows. Took `180` seconds.
-* `labevents_21` have `5,429,341` rows. Took `80` seconds.
-* `labs_raw` have `473,099` rows. Took `36` seconds.
+* `labevents_21` have `6,038,848` rows. Took `83` seconds.
+* `labs_raw` have `522,278` rows. Took `23` seconds.
 * `small_charevents` have `27,020,302` rows. Took `589` seconds.
 * `vitals_raw` have `249,167` rows. Took `90` seconds.
-* `vitals_raw` have `48,877` rows. Took `3.5` seconds.
+* `assemble` have `48,877` rows. Took `3.5` seconds.
 ````sql
 DROP TABLE IF EXISTS static_data;
 create table static_data as
