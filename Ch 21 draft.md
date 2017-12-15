@@ -77,7 +77,7 @@ alter table labevents_21
 
 
 
-DROP TABLE IF EXISTS labs_raw
+DROP TABLE IF EXISTS labs_raw;
  create table labs_raw as
 select a.*
 from labevents_21 a, (
@@ -90,8 +90,8 @@ where a.ICUSTAY_ID = b.ICUSTAY_ID and a.itemid = b.itemid and a.charttime = b.mi
 # Index creation
 alter table labevents_21
 	add index labs_raw_idx01 (subject_id),
-	add index labs_raw_idx02 (hadm_id)
-	add index labs_raw_idx03 (ICUSTAY_ID)
+	add index labs_raw_idx02 (hadm_id),
+	add index labs_raw_idx03 (ICUSTAY_ID),
 	add index labs_raw_idx04 (itemid)
 ;
 
@@ -121,6 +121,7 @@ group by hadm_id
 ------------------------------------
 --- BEGIN EXTRACTION OF VITALS
 ------------------------------------
+DROP TABLE IF EXISTS small_charevents;
 create table small_charevents as
 select ICUSTAY_ID,
 	
@@ -141,13 +142,13 @@ select ICUSTAY_ID,
 ;
 alter table labevents_21
 	add index labevents_21_idx01 (subject_id),
-	add index labevents_21_idx02 (hadm_id)
-	add index labevents_21_idx03 (ICUSTAY_ID)
+	add index labevents_21_idx02 (hadm_id),
+	add index labevents_21_idx03 (ICUSTAY_ID),
 	add index labevents_21_idx04 (itemid)
 
 
 
-
+DROP TABLE IF EXISTS vitals_raw;
 create table vitals_raw as
 select a.*
 from small_charevents a, (
@@ -160,8 +161,8 @@ where a.ICUSTAY_ID = b.ICUSTAY_ID and a.type = b.type and a.charttime = b.min_ch
 
 alter table labevents_21
 	add index vitals_raw_idx01 (subject_id),
-	add index vitals_raw_idx02 (hadm_id)
-	add index vitals_raw_idx03 (ICUSTAY_ID)
+	add index vitals_raw_idx02 (hadm_id),
+	add index vitals_raw_idx03 (ICUSTAY_ID),
 	add index vitals_raw_idx04 (itemid)
 
 ------------------------------------
