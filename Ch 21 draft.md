@@ -3,6 +3,7 @@
 * `static_data` have `53,423` rows. Took `180` seconds.
 * `labevents_21` have `5,429,341` rows. Took `80` seconds.
 * `labs_raw` have `473,099` rows. Took `36` seconds.
+* `small_charevents` have `27,020,302` rows. Took `589` seconds.
 ````sql
 DROP TABLE IF EXISTS static_data;
 create table static_data as
@@ -122,7 +123,7 @@ group by hadm_id
 ------------------------------------
 DROP TABLE IF EXISTS small_charevents;
 create table small_charevents as
-select ICUSTAY_ID,
+select hadm_id,
 	
         case
          when itemid in (211, 220045) then 'hr'
@@ -136,14 +137,15 @@ select ICUSTAY_ID,
         valuenum
  from mimiciiiv13.chartevents l
  where itemid in (211,51,52,455,456,678,679,646,618,220045,220052,220050,223761,220210 )-- note: dont have spo2 value yet
-   and ICUSTAY_ID in (select ICUSTAY_ID from static_data) 
+   and hadm_id in (select hadm_id from static_data) 
    and valuenum is not null
 ;
-alter table labevents_21
-	add index labevents_21_idx01 (subject_id),
-	add index labevents_21_idx02 (hadm_id),
-	add index labevents_21_idx03 (ICUSTAY_ID),
-	add index labevents_21_idx04 (itemid)
+alter table small_charevents
+	add index small_charevents_idx01 (hadm_id),
+	add index small_charevents_idx02 (charttime),
+	add index small_charevents_idx03 (type)
+;
+
 
 
 
@@ -151,18 +153,16 @@ DROP TABLE IF EXISTS vitals_raw;
 create table vitals_raw as
 select a.*
 from small_charevents a, (
-				select ICUSTAY_ID, type, min(charttime) as min_charttime
+				select hadm_id, type, min(charttime) as min_charttime
 				from small_charevents 
-				group by ICUSTAY_ID, type
+				group by hadm_id, type
 				) b
-where a.ICUSTAY_ID = b.ICUSTAY_ID and a.type = b.type and a.charttime = b.min_charttime
+where a.hadm_id = b.hadm_id and a.type = b.type and a.charttime = b.min_charttime
+;
 
-
-alter table labevents_21
-	add index vitals_raw_idx01 (subject_id),
-	add index vitals_raw_idx02 (hadm_id),
-	add index vitals_raw_idx03 (ICUSTAY_ID),
-	add index vitals_raw_idx04 (itemid)
+alter table vitals_raw
+	add index vitals_raw_idx01 (hadm_id),
+	add index vitals_raw_idx02 (type)
 
 ------------------------------------
 --- END OF EXTRACTION OF VITALS
