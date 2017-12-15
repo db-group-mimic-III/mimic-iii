@@ -54,10 +54,9 @@ alter table static_data
 -----------------------------
 -- BEGIN EXTRACTION OF LABS 
 -----------------------------
-DROP TABLE IF EXISTS labevents_21
+DROP TABLE IF EXISTS labevents_21;
 create table labevents_21 as
 (select hadm_id,
-	ICUSTAY_ID,
         itemid,
         charttime,
         valuenum
@@ -70,10 +69,9 @@ create table labevents_21 as
 # Index creation
 alter table labevents_21
 	add index labevents_21_idx01 (subject_id),
-	add index labevents_21_idx02 (hadm_id)
-	add index labevents_21_idx03 (ICUSTAY_ID)
-	add index labevents_21_idx04 (charttime)
-;
+	add index labevents_21_idx02 (hadm_id),
+	add index labevents_21_idx03 (charttime)
+	;
 
 
 
