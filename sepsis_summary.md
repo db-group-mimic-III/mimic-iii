@@ -233,7 +233,7 @@ select NULL, j.* from (
 # Resp rate 
 insert into abnorm_clin_val
 select NULL, j.* from (
-	select hadm_id,  'Resp rate' as category,itemid, charttime, valuenum
+	select hadm_id,  'CO2' as category,itemid, charttime, valuenum
 	from chartevents
 	where hadm_id in
 		(
