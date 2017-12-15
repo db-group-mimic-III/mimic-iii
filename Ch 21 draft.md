@@ -1,6 +1,7 @@
 -- This query extracts data for the tutorial in the clinical data analytics book chapter. Only the first icu stays from adult patients are extracted.
 ````sql
-create view static_data as
+DROP TABLE IF EXISTS static_data
+create table static_data as
 select icu.subject_id,
 			icu.hadm_id,
 			icu.ICUSTAY_ID,
@@ -42,13 +43,21 @@ where icu.subject_id in (select  subject_id
 				left join patients p on j.subject_id = p.subject_id) t
 			where t.age_at_admission > 15)
 ;
-select * from static_data;
+# Index creation
+alter table static_data
+	add index static_data_idx01 (subject_id),
+	add index static_data_idx02 (hadm_id)
+	add index static_data_idx03 (ICUSTAY_ID)
+	
+;
 
 -----------------------------
--- BEGIN EXTRACTION OF LABS # Code is good!!!
+-- BEGIN EXTRACTION OF LABS 
 -----------------------------
- create view labevents_21 as
-(select hadm_id,        
+DROP TABLE IF EXISTS labevents_21
+create table labevents_21 as
+(select hadm_id,
+	ICUSTAY_ID,
         itemid,
         charttime,
         valuenum
@@ -58,23 +67,34 @@ select * from static_data;
    and valuenum is not null
 )
 ;
-select * from labevents_21;
+# Index creation
+alter table labevents_21
+	add index labevents_21_idx01 (subject_id),
+	add index labevents_21_idx02 (hadm_id)
+	add index labevents_21_idx03 (ICUSTAY_ID)
+	add index labevents_21_idx04 (charttime)
+;
 
 
 
--- ****************** look at code!
-
+DROP TABLE IF EXISTS labs_raw
  create table labs_raw as
 select a.*
 from labevents_21 a, (
-	select hadm_id, itemid , min(charttime) as min_charrtime
+	select ICUSTAY_ID, itemid , min(charttime) as min_charrtime
 	from labevents_21
-	group by hadm_id, itemid
+	group by ICUSTAY_ID, itemid
 									) b
-where a.hadm_id = b.hadm_id and a.itemid = b.itemid and a.charttime = b.min_charrtime
-
-
+where a.ICUSTAY_ID = b.ICUSTAY_ID and a.itemid = b.itemid and a.charttime = b.min_charrtime
 ;
+# Index creation
+alter table labevents_21
+	add index labs_raw_idx01 (subject_id),
+	add index labs_raw_idx02 (hadm_id)
+	add index labs_raw_idx03 (ICUSTAY_ID)
+	add index labs_raw_idx04 (itemid)
+;
+
 select * from labs_raw;
 
 select  hadm_id,
@@ -102,7 +122,8 @@ group by hadm_id
 --- BEGIN EXTRACTION OF VITALS
 ------------------------------------
 create table small_charevents as
-select hadm_id,
+select ICUSTAY_ID,
+	
         case
          when itemid in (211, 220045) then 'hr'
          when itemid in (52,456, 220052) then 'map'  -- invasive and noninvasive measurements are combined
@@ -115,17 +136,33 @@ select hadm_id,
         valuenum
  from mimiciiiv13.chartevents l
  where itemid in (211,51,52,455,456,678,679,646,618,220045,220052,220050,223761,220210 )-- note: dont have spo2 value yet
-   and hadm_id in (select hadm_id from static_data) 
+   and ICUSTAY_ID in (select ICUSTAY_ID from static_data) 
    and valuenum is not null
 ;
+alter table labevents_21
+	add index labevents_21_idx01 (subject_id),
+	add index labevents_21_idx02 (hadm_id)
+	add index labevents_21_idx03 (ICUSTAY_ID)
+	add index labevents_21_idx04 (itemid)
+
+
+
+
 create table vitals_raw as
 select a.*
 from small_charevents a, (
-				select hadm_id, type, min(charttime) as min_charttime
+				select ICUSTAY_ID, type, min(charttime) as min_charttime
 				from small_charevents 
-				group by hadm_id, type
+				group by ICUSTAY_ID, type
 				) b
-where a.hadm_id = b.hadm_id and a.type = b.type and a.charttime = b.min_charttime
+where a.ICUSTAY_ID = b.ICUSTAY_ID and a.type = b.type and a.charttime = b.min_charttime
+
+
+alter table labevents_21
+	add index vitals_raw_idx01 (subject_id),
+	add index vitals_raw_idx02 (hadm_id)
+	add index vitals_raw_idx03 (ICUSTAY_ID)
+	add index vitals_raw_idx04 (itemid)
 
 ------------------------------------
 --- END OF EXTRACTION OF VITALS
@@ -135,7 +172,7 @@ where a.hadm_id = b.hadm_id and a.type = b.type and a.charttime = b.min_charttim
 select *
 from
 (
-select hadm_id,
+select ICUSTAY_ID,
 			sum(case type when 'hr' then valuenum else NULL END) as 'hr',
 			sum(case type when 'map' then valuenum else NULL END) as 'map',
 			sum(case type when 'sbp' then valuenum else NULL END) as 'sbp',
@@ -143,10 +180,10 @@ select hadm_id,
 			sum(case type when 'spo2' then valuenum else NULL END) as 'spo2',
 			sum(case type when 'rr' then valuenum else NULL END) as 'rr'
 from vitals_raw
-group by hadm_id
+group by ICUSTAY_ID
 ) z,
 (
-select  hadm_id,
+select  ICUSTAY_ID,
 			sum(case itemid when 50912 then valuenum else NULL END) as cr,
 			sum(case itemid when 50971 then valuenum else NULL END) as k,
 			sum(case itemid when 50983 then valuenum else NULL END) as na,
@@ -160,6 +197,6 @@ select  hadm_id,
 			sum(case itemid when 50970 then valuenum else NULL END) as p,
 			sum(case itemid when 50813 then valuenum else NULL END) as lactate
 from  labs_raw 
-group by hadm_id
+group by ICUSTAY_ID
 ) y
-where z.hadm_id = y.hadm_id
+where z.ICUSTAY_ID = y.ICUSTAY_ID
