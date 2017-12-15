@@ -303,8 +303,8 @@ alter table sirs
 ;
 ```
 
-#### Alternative SIRS table, load from CSV file
-Adding this table enabled us to run different queries on the data we dervied from the SIRS query
+#### Alternative SIRS table, loading from CSV file
+We use parallel processing on R to avoid the bottleneck with the SIRS query. The output of the R script is the sirs.csv file that can be used to load the data into the empty SIRS table.
 ```SQL
 DROP TABLE IF EXISTS sirs;
 create table sirs (
@@ -334,7 +334,7 @@ alter table sirs
 ```
 ### Create intervention table
 **Warning** query took `2.8` minutes i7 MacBook Pro 15-inch 2017. `61,466` rows.
-Finding SIRS patients who were administered antibiotics.
+Finding patients with sepsis ICD-9 codes who were administered antibiotics.
 ```SQL
 DROP TABLE IF EXISTS atb_interventions;
 create table atb_interventions (
